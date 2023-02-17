@@ -142,7 +142,7 @@ local tab2 = win:Tab("Quests")
 --tab:Section(title <string>)
 local sec2 = tab2:Section("Quests")
 
-local dropdown = sec2:Dropdown("Quests", {"Acquired Taste | 10+","Hueco Mundo Hunt | 15+","Test Of Might | 15+"},"","Dropdown", function(t)
+local dropdown = sec2:Dropdown("Quests", {"Acquired Taste | 10+","Op Killer | 15+","Hueco Mundo Hunt | 15+","Test Of Might | 15+"},"","Dropdown", function(t)
   getgenv().quest = t
 end)
 
@@ -213,6 +213,69 @@ local toggle = sec2:Toggle("AutoQuest", false,"Toggle", function(a)
                         end
                     end
                 end
+            elseif quest == "Op Killer | 15+" then
+                local args = {
+                    [1] = "Op Killer",
+                    [2] = workspace:WaitForChild("NPCs"):WaitForChild("Infernasu")
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("TakeQuest"):FireServer(unpack(args))
+                    local objectives = game:GetService("Players")["LocalPlayer"].PlayerGui.HUD.QuestsFrame2["Op Killer"].Frame.Objective.Text
+                    for _, enemy in pairs(workspace.Living:GetChildren()) do
+                        local enemyName = enemy.Name
+                        local obj = objectives:match("Kill [^ ]+ " .. enemyName)
+                        if obj then
+                            local count = tonumber(obj:match("Kill ([^ ]+) "))
+                            if count > 0 then
+                                local NPC2 = enemy
+                                local lp = game.Players.LocalPlayer
+                                repeat task.wait()
+                                    local dis2 = distance
+                                    local newPos = NPC2.HumanoidRootPart.Position - NPC2.HumanoidRootPart.CFrame.lookVector * dis2
+                                    lp.Character.HumanoidRootPart.CFrame = CFrame.new(newPos, NPC2.HumanoidRootPart.Position)
+                                    local args = {
+                                        [1] = {
+                                            ["inputType"] = Enum.UserInputType.MouseButton1,
+                                            ["keyCode"] = Enum.KeyCode.Unknown
+                                        }
+                                    }
+    
+                                    if NPC2.Status.Blocking.Value == false then
+                                      game:GetService("ReplicatedStorage").Remotes.Input:FireServer(unpack(args))
+                                    else
+                                      local args = {
+                                          [1] = {
+                                              ["inputType"] = Enum.UserInputType.MouseButton2,
+                                              ["keyCode"] = Enum.KeyCode.Unknown
+                                          }
+                                      }
+                                      game:GetService("ReplicatedStorage").Remotes.Input:FireServer(unpack(args))
+                                    end
+                                    if lp.Status.Weapon.Value == nil then
+                                        local args = {
+                                            [1] = {
+                                                ["inputType"] = Enum.UserInputType.MouseButton2,
+                                                ["keyCode"] = Enum.KeyCode.Unknown
+                                            }
+                                        }
+                                        game:GetService("ReplicatedStorage").Remotes.Input:FireServer(unpack(args))
+                                    elseif NPC2.Status.Blocking.Value == true then
+                                      print("blocking")
+                                      local args = {
+                                          [1] = {
+                                              ["inputType"] = Enum.UserInputType.Keyboard,
+                                              ["keyCode"] = Enum.KeyCode.R
+                                          }
+                                      }
+                  
+                                      game:GetService("ReplicatedStorage").Remotes.Input:FireServer(unpack(args))
+                    
+                                  end
+                                  
+                                until not lp.Character.HumanoidRootPart.Position:Distance(NPC2.HumanoidRootPart.Position) < dis2 + 0.1 or count == 0
+                            end
+                        end
+                    end
                   elseif quest == "Test Of Might | 15+" then
                       local args = {
                           [1] = "Test Of Might",
@@ -273,8 +336,6 @@ local toggle = sec2:Toggle("AutoQuest", false,"Toggle", function(a)
                               end
                           end
                       end
-
-                      ------------------------------------ NO WAY I MANAGED TO PULL THIS OFF LOL, START WITH ENHANCED ARRANCAR AND FARM IT UNTIL IT'S DONE THEN CHECKS FOR THE REST OF THE ENEMIES LOL-----------------------------
                 elseif quest == "Hueco Mundo Hunt | 15+" then
                     local args = {
                         [1] = "Hueco Mundo Hunt",
